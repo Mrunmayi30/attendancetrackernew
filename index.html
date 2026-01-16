@@ -2,260 +2,333 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Attendance Tracker</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance Tracker – Teacher</title>
 
 <style>
-body{
-  background:#0d0d0d;
-  color:#eaeaea;
-  font-family:Segoe UI,sans-serif;
-  margin:0;
-}
-h2{text-align:center;margin:15px}
-
-.container{
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  padding:10px;
-  flex-wrap:wrap;
+:root {
+    --bg-dark: #0d0d0d;
+    --card-dark: #161616;
+    --text: #eaeaea;
+    --green: #00c853;
+    --red: #ff5252;
+    --blue: #448aff;
+    --shadow: 0 8px 25px rgba(0,0,0,0.4);
 }
 
-input,button{
-  padding:8px 12px;
-  border:none;
-  border-radius:6px;
+body {
+    background: var(--bg-dark);
+    color: var(--text);
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
 }
 
-input{background:#1e1e1e;color:#fff}
-button{cursor:pointer}
-
-.card{
-  background:#161616;
-  padding:15px;
-  border-radius:12px;
-  box-shadow:0 8px 25px rgba(0,0,0,.4);
-  position:relative;
+h2 {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 500;
 }
 
-.present{background:#1f7a3f;color:#fff}
-.undo{background:#444;color:#fff;border:1px solid #888}
-
-.menu-btn{
-  position:absolute;
-  top:10px;
-  right:10px;
-  background:none;
-  color:#fff;
-  font-size:20px;
-  padding:4px;
+/* TOTAL STUDENTS */
+#total-students {
+    text-align: center;
+    margin-top: 5px;
+    color: #ccc;
+    font-size: 16px;
 }
 
-.menu-content{
-  position:absolute;
-  top:35px;
-  right:10px;
-  background:#222;
-  border-radius:6px;
-  overflow:hidden;
-  display:none;
-  z-index:10;
+/* ADD STUDENT */
+#add-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+}
+#add-container input {
+    padding: 10px;
+    font-size: 16px;
+    width: 220px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: #1e1e1e;
+    color: var(--text);
+}
+#add-container button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: var(--blue);
+    color: white;
+    cursor: pointer;
 }
 
-.menu-content button{
-  background:none;
-  color:#fff;
-  padding:8px 14px;
-  width:100%;
-  text-align:left;
+/* SEARCH BAR */
+#search-box {
+    display: flex;
+    justify-content: center;
+    padding: 10px 20px;
+}
+#search-box input {
+    width: 260px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background: #1e1e1e;
+    color: var(--text);
+    font-size: 16px;
 }
 
-.menu-content button:hover{
-  background:#333;
+/* CARDS */
+#cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    padding: 20px;
 }
 
-#cards{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:16px;
-  padding:20px;
+.card {
+    background: var(--card-dark);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    position: relative;
 }
 
-#toast{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#222;
-  padding:12px 20px;
-  border-radius:8px;
-  display:none;
+.menu-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.menu-box {
+    position: absolute;
+    top: 40px;
+    right: 15px;
+    background: #222;
+    padding: 10px;
+    border-radius: 8px;
+    display: none;
+    box-shadow: var(--shadow);
+}
+.menu-box button {
+    width: 100%;
+    background: #333;
+    color: var(--text);
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* BUTTONS */
+.controls {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+}
+.controls button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+.present-btn { background: var(--green); color: white; }
+.absent-btn { background: var(--red); color: white; }
+.undo-btn { background: var(--blue); color: white; }
+
+/* TOAST */
+#toast {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    padding: 12px 22px;
+    border-radius: 8px;
+    color: white;
+    display: none;
+    font-size: 15px;
+}
+
+.advice {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #aaa;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Attendance Tracker</h2>
+<h2>Teacher Attendance Tracker</h2>
+<div id="total-students">Total Students: 0</div>
 
-<div class="container">
-  <input id="newStudent" placeholder="New Student Name">
-  <button onclick="addStudent()">Add Student</button>
+<div id="add-container">
+    <input id="newStu" type="text" placeholder="Student Name">
+    <button onclick="addStudent()">Add</button>
 </div>
 
-<div class="container">
-  <button onclick="markToday()">Mark for Today</button>
+<!-- SEARCH BAR -->
+<div id="search-box">
+    <input type="text" id="searchInput" placeholder="Search student..." oninput="render()">
 </div>
 
-<div class="container">
-  <input id="search" placeholder="Search Student" oninput="render()">
-</div>
+<div id="cards-container"></div>
 
-<div id="cards"></div>
 <div id="toast"></div>
 
 <script>
-let students = JSON.parse(localStorage.getItem("students")) || [];
-let weeks = JSON.parse(localStorage.getItem("weeks")) || [];
-let currentWeek = getWeekKey();
+let students = JSON.parse(localStorage.getItem("stuData")) || [];
+students.forEach(s => { if (!s.history) s.history = []; });
 
-/* ---------- UTIL ---------- */
-function save(){
-  localStorage.setItem("students",JSON.stringify(students));
-  localStorage.setItem("weeks",JSON.stringify(weeks));
+/* SORT STUDENTS ALPHABETICALLY */
+function sortStudents() {
+    students.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function toast(msg){
-  const t=document.getElementById("toast");
-  t.innerText=msg;
-  t.style.display="block";
-  setTimeout(()=>t.style.display="none",1200);
+/* SAVE TO LOCAL STORAGE */
+function save() {
+    sortStudents();
+    localStorage.setItem("stuData", JSON.stringify(students));
 }
 
-function getWeekKey(date=new Date()){
-  const d=new Date(date);
-  const year=d.getFullYear();
-  const week=Math.ceil((((d-new Date(year,0,1))/86400000)+new Date(year,0,1).getDay()+1)/7);
-  return `${year}-W${week}`;
+/* TOAST MESSAGE */
+function toast(msg) {
+    const t = document.getElementById("toast");
+    t.innerText = msg;
+    t.style.display = "block";
+    setTimeout(() => t.style.display = "none", 1200);
 }
 
-/* ---------- STUDENT ---------- */
-function addStudent(){
-  const name=document.getElementById("newStudent").value.trim();
-  if(!name) return;
+/* ADD STUDENT */
+function addStudent() {
+    let name = document.getElementById("newStu").value.trim();
+    if (!name) return;
 
-  students.push({
-    id:Date.now(),
-    name,
-    joinWeek:getWeekKey(),
-    attendance:{}
-  });
+    students.push({
+        id: Date.now(),
+        name,
+        attended: 0,
+        total: 0,
+        history: []
+    });
 
-  document.getElementById("newStudent").value="";
-  save();
-  render();
-  toast("Student added (0/0)");
-}
-
-/* ---------- DELETE ---------- */
-function deleteStudent(id){
-  if(!confirm("Remove student permanently?")) return;
-  students = students.filter(s=>s.id!==id);
-  save();
-  render();
-}
-
-/* ---------- MARK TODAY ---------- */
-function markToday(){
-  currentWeek = getWeekKey();
-  if(!weeks.includes(currentWeek)){
-    weeks.push(currentWeek);
     save();
-  }
-  toast("Mark students who attended today");
-  render();
+    render();
+    document.getElementById("newStu").value = "";
 }
 
-/* ---------- PRESENT / UNDO ---------- */
-function togglePresent(id){
-  const s = students.find(st=>st.id===id);
-  if(s.joinWeek > currentWeek){
-    toast("Student not enrolled yet");
-    return;
-  }
-
-  if(s.attendance[currentWeek]){
-    delete s.attendance[currentWeek];
-    toast("Attendance undone");
-  } else {
-    s.attendance[currentWeek] = true;
-  }
-
-  save();
-  render();
-}
-
-/* ---------- ATTENDANCE ---------- */
-function getAttendance(s){
-  let total=0, attended=0;
-
-  weeks.forEach(w=>{
-    if(w < s.joinWeek) return;
-
-    if(w < currentWeek || s.attendance[w]){
-      total++;
-      if(s.attendance[w]) attended++;
+/* DELETE STUDENT */
+function deleteStudent(i) {
+    if (confirm("Delete this student?")) {
+        students.splice(i, 1);
+        save();
+        render();
     }
-  });
-
-  return {attended,total};
 }
 
-/* ---------- MENU CONTROL ---------- */
-function toggleMenu(id){
-  document.querySelectorAll(".menu-content").forEach(m=>m.style.display="none");
-  const menu=document.getElementById("menu-"+id);
-  menu.style.display = menu.style.display==="block"?"none":"block";
+function toggleMenu(i) {
+    const box = document.getElementById(`menu-${i}`);
+    box.style.display = (box.style.display === "block") ? "none" : "block";
 }
 
-document.addEventListener("click",e=>{
-  if(!e.target.classList.contains("menu-btn")){
-    document.querySelectorAll(".menu-content").forEach(m=>m.style.display="none");
-  }
-});
+/* MARK PRESENT */
+function markPresent(i) {
+    students[i].history.push({
+        attended: students[i].attended,
+        total: students[i].total
+    });
 
-/* ---------- RENDER ---------- */
-function render(){
-  const search=document.getElementById("search").value.toLowerCase();
-  let html="";
+    students[i].attended++;
+    students[i].total++;
 
-  students.forEach(s=>{
-    if(!s.name.toLowerCase().includes(search)) return;
+    save();
+    render();
+}
 
-    const a=getAttendance(s);
-    const percent=a.total?((a.attended/a.total)*100).toFixed(2):"0.00";
-    const marked=s.attendance[currentWeek];
+/* MARK ABSENT */
+function markAbsent(i) {
+    students[i].history.push({
+        attended: students[i].attended,
+        total: students[i].total
+    });
 
-    html+=`
-    <div class="card">
-      <button class="menu-btn" onclick="event.stopPropagation();toggleMenu(${s.id})">⋮</button>
-      <div class="menu-content" id="menu-${s.id}">
-        <button onclick="deleteStudent(${s.id})">Delete Student</button>
-      </div>
+    students[i].total++;
 
-      <h3>${s.name}</h3>
-      <p>Attendance: ${a.attended}/${a.total}</p>
-      <p>Percentage: ${percent}%</p>
+    save();
+    render();
+}
 
-      <button class="${marked?'undo':'present'}"
-        onclick="togglePresent(${s.id})">
-        ${marked?'Undo Present':'Mark Present'}
-      </button>
-    </div>`;
-  });
+/* UNDO LAST ACTION */
+function undo(i) {
+    if (students[i].history.length === 0) {
+        toast("Nothing to undo");
+        return;
+    }
 
-  document.getElementById("cards").innerHTML=html;
+    const prev = students[i].history.pop();
+    students[i].attended = prev.attended;
+    students[i].total = prev.total;
+
+    save();
+    render();
+}
+
+/* SIMPLE ADVICE */
+function getAdvice(stu) {
+    if (stu.total === 0) return "No data yet";
+
+    const percent = (stu.attended / stu.total) * 100;
+
+    if (percent >= 75) return "Attendance is Good";
+    return "Needs Improvement";
+}
+
+/* RENDER ALL STUDENT CARDS */
+function render() {
+    sortStudents();
+
+    // Update total students
+    document.getElementById("total-students").innerText = `Total Students: ${students.length}`;
+
+    let html = "";
+    const search = document.getElementById("searchInput").value.toLowerCase();
+
+    students.forEach((stu, i) => {
+        if (!stu.name.toLowerCase().includes(search)) return;
+
+        let pct = stu.total === 0 ? 0 : ((stu.attended / stu.total) * 100).toFixed(1);
+
+        html += `
+        <div class="card">
+
+            <div class="menu-btn" onclick="toggleMenu(${i})">⋮</div>
+            <div class="menu-box" id="menu-${i}">
+                <button onclick="deleteStudent(${i})">Delete</button>
+            </div>
+
+            <h3>${stu.name}</h3>
+            <p><b>Attendance:</b> ${stu.attended} / ${stu.total}</p>
+            <p><b>Percentage:</b> ${pct}%</p>
+            <div class="advice">${getAdvice(stu)}</div>
+
+            <div class="controls">
+                <button class="present-btn" onclick="markPresent(${i})">Present</button>
+                <button class="absent-btn" onclick="markAbsent(${i})">Absent</button>
+                <button class="undo-btn" onclick="undo(${i})">Undo</button>
+            </div>
+        </div>
+        `;
+    });
+
+    document.getElementById("cards-container").innerHTML = html;
 }
 
 render();
